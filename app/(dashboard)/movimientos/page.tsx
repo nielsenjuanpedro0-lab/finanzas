@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { getTransactions } from '@/app/actions/transactions'
 import { TransactionForm } from '@/components/transaction-form'
 import { TransactionList } from '@/components/transaction-list'
+import { MonthSelector } from '@/components/month-selector'
 
 function getCurrentMonth() {
   const now = new Date()
@@ -53,32 +54,3 @@ export default async function MovimientosPage({
   )
 }
 
-function MonthSelector({ currentMonth }: { currentMonth: string }) {
-  const months = []
-  const now = new Date()
-  for (let i = 0; i < 6; i++) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-    const label = d.toLocaleDateString('es-AR', { month: 'short', year: 'numeric' })
-    months.push({ value, label })
-  }
-
-  return (
-    <form>
-      <select
-        name="mes"
-        defaultValue={currentMonth}
-        onChange={(e) => {
-          const url = new URL(window.location.href)
-          url.searchParams.set('mes', e.target.value)
-          window.location.href = url.toString()
-        }}
-        className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600 bg-white"
-      >
-        {months.map(m => (
-          <option key={m.value} value={m.value}>{m.label}</option>
-        ))}
-      </select>
-    </form>
-  )
-}
