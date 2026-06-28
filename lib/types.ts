@@ -30,6 +30,16 @@ export interface Transaction {
   categoria: string
   descripcion: string | null
   income_source_id: string | null
+  wallet_id: string | null
+  created_at: string
+}
+
+export interface Wallet {
+  id: string
+  nombre: string
+  tipo: 'efectivo' | 'banco' | 'virtual' | 'inversion' | 'otro'
+  saldo: number
+  activo: boolean
   created_at: string
 }
 

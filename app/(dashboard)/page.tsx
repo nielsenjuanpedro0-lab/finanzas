@@ -4,9 +4,15 @@ import { getProfile } from '@/app/actions/profile'
 import { getFixedExpenses } from '@/app/actions/fixed-expenses'
 import { getTransactions } from '@/app/actions/transactions'
 import { getLoans } from '@/app/actions/loans'
+import { getWallets } from '@/app/actions/wallets'
 import { computeDiagnosis, formatARS } from '@/lib/finance-engine'
 import { Phasebadge } from '@/components/phase-badge'
 import { BudgetBars } from '@/components/budget-bars'
+import type { Wallet } from '@/lib/types'
+
+const WALLET_EMOJIS: Record<string, string> = {
+  efectivo: '💵', banco: '🏦', virtual: '📱', inversion: '📈', otro: '🗂',
+}
 
 const PHASE_LABELS = {
   supervivencia: 'Supervivencia',
@@ -28,10 +34,11 @@ export default async function DashboardPage() {
   const profile = await getProfile()
   if (!profile) redirect('/configuracion')
 
-  const [fixedExpenses, transactions, loans] = await Promise.all([
+  const [fixedExpenses, transactions, loans, wallets] = await Promise.all([
     getFixedExpenses(),
     getTransactions(),
     getLoans(),
+    getWallets(),
   ])
 
   const currentMonth = getCurrentMonth()
@@ -95,6 +102,26 @@ export default async function DashboardPage() {
           <p className="text-xl font-semibold text-gray-700">${formatARS(diagnosis.totalCuotas)}</p>
         </div>
       </div>
+
+      {/* Billeteras */}
+      {wallets.length > 0 && (
+        <div className="border border-gray-200 rounded-xl p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-gray-900">Mis billeteras</h2>
+            <span className="text-sm font-semibold text-gray-700">
+              Total: ${formatARS(wallets.reduce((s, w) => s + w.saldo, 0))}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {wallets.map((w: Wallet) => (
+              <div key={w.id} className="bg-gray-50 rounded-lg p-3 space-y-1">
+                <p className="text-xs text-gray-500">{WALLET_EMOJIS[w.tipo]} {w.nombre}</p>
+                <p className="text-sm font-semibold text-gray-900">${formatARS(w.saldo)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Plan del mes + Alertas */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

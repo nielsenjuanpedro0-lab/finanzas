@@ -26,25 +26,35 @@ export function ProfileForm({ profile }: { profile: Profile | null }) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="sueldo">Sueldo fijo mensual neto (ARS)</Label>
-          <Input
-            id="sueldo"
-            type="number"
-            placeholder="500000"
-            value={sueldo}
-            onChange={(e) => setSueldo(e.target.value)}
-            required
-          />
+          <Label htmlFor="sueldo">Sueldo fijo mensual neto</Label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">$</span>
+            <Input
+              id="sueldo"
+              type="number"
+              placeholder="500.000"
+              value={sueldo}
+              onChange={(e) => setSueldo(e.target.value)}
+              className="pl-7"
+              required
+            />
+          </div>
+          <p className="text-xs text-gray-400">Lo que te depositan cada mes de tu trabajo fijo</p>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="otros">Otros ingresos estimados (ARS)</Label>
-          <Input
-            id="otros"
-            type="number"
-            placeholder="0"
-            value={otros}
-            onChange={(e) => setOtros(e.target.value)}
-          />
+          <Label htmlFor="otros">Otros ingresos fijos mensuales</Label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">$</span>
+            <Input
+              id="otros"
+              type="number"
+              placeholder="0"
+              value={otros}
+              onChange={(e) => setOtros(e.target.value)}
+              className="pl-7"
+            />
+          </div>
+          <p className="text-xs text-gray-400">Alquiler que cobrás, cuota fija de cliente, etc. Los ingresos variables los cargás en Movimientos.</p>
         </div>
       </div>
       <Button type="submit" disabled={saving}>

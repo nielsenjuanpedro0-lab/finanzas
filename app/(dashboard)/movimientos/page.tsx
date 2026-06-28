@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 import { getTransactions } from '@/app/actions/transactions'
+import { getWallets } from '@/app/actions/wallets'
 import { TransactionForm } from '@/components/transaction-form'
 import { TransactionList } from '@/components/transaction-list'
 import { MonthSelector } from '@/components/month-selector'
@@ -16,7 +17,10 @@ export default async function MovimientosPage({
 }) {
   const { mes } = await searchParams
   const month = mes || getCurrentMonth()
-  const transactions = await getTransactions(month)
+  const [transactions, wallets] = await Promise.all([
+    getTransactions(month),
+    getWallets(),
+  ])
 
   const totalIngresos = transactions.filter(t => t.tipo === 'ingreso').reduce((s, t) => s + t.monto, 0)
   const totalGastos = transactions.filter(t => t.tipo === 'gasto').reduce((s, t) => s + t.monto, 0)
@@ -30,7 +34,7 @@ export default async function MovimientosPage({
 
       <div className="border border-gray-200 rounded-xl p-6">
         <h2 className="text-sm font-semibold text-gray-900 mb-4">Cargar movimiento</h2>
-        <TransactionForm />
+        <TransactionForm wallets={wallets} />
       </div>
 
       <div className="border border-gray-200 rounded-xl p-6 space-y-4">

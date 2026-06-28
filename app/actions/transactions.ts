@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { supabaseClient } from '@/lib/supabase'
+import { adjustWalletSaldo } from './wallets'
 import type { Transaction } from '@/lib/types'
 
 export async function getTransactions(month?: string): Promise<Transaction[]> {
@@ -22,9 +23,14 @@ export async function addTransaction(
   monto: number,
   categoria: string,
   descripcion: string,
-  income_source_id?: string
+  wallet_id?: string,
 ) {
-  await supabaseClient().from('transactions').insert({ fecha, tipo, monto, categoria, descripcion: descripcion || null, income_source_id: income_source_id || null })
+  await supabaseClient().from('transactions').insert({
+    fecha, tipo, monto, categoria,
+    descripcion: descripcion || null,
+    wallet_id: wallet_id || null,
+  })
+  if (wallet_id) await adjustWalletSaldo(wallet_id, tipo, monto)
   revalidatePath('/', 'layout')
 }
 
